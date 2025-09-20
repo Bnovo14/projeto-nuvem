@@ -5,7 +5,7 @@ async function buscarDados() {
     elementoMensagem.textContent = 'Buscando dados...';
 
     // Este é o endereço do back-end que você acabou de criar!
-    const backend_url = 'http://localhost:25000/dados'; 
+    const backend_url = 'https://shiny-invention-p4qp7j5656j39pv5-25000.app.github.dev/dados'; 
 
     try {
         // Tenta fazer a "chamada" para o back-end

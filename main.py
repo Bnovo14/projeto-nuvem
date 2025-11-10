@@ -4,7 +4,7 @@ from fastapi import FastAPI, Depends, HTTPException, status
 # Importações do SQLModel
 from sqlmodel import Field, Session, SQLModel, create_engine, select
 from typing import List, Optional
-
+#TESTE
 # -------------------------------------------------------------------
 # 1. CONFIGURAÇÃO DO BANCO DE DADOS (PostgreSQL)
 # -------------------------------------------------------------------

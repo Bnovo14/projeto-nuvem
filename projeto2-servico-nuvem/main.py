@@ -1,16 +1,17 @@
+# main.py
 import uvicorn
 from fastapi import FastAPI, Depends, HTTPException, status
+# Importações do SQLModel
 from sqlmodel import Field, Session, SQLModel, create_engine, select
 from typing import List, Optional
-from dotend import load_dotenv
-load_dotenv()
+#TESTE
 # -------------------------------------------------------------------
 # 1. CONFIGURAÇÃO DO BANCO DE DADOS (PostgreSQL)
 # -------------------------------------------------------------------
 
 # ATENÇÃO: Substitua pela sua string de conexão do PostgreSQL
 # Formato: "postgresql://USUARIO:SENHA@HOST:PORTA/NOME_DO_BANCO"
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = "postgresql://postgres:sua_senha_aqui@localhost/catalogofilmes"
 
 # Cria a "engine" de conexão.
 # O connect_args é recomendado pelo FastAPI/SQLModel para SQLite, mas
@@ -33,30 +34,33 @@ def create_db_and_tables():
 
 # Este é o modelo "Base", com os campos que esperamos
 # na criação (input da API) e que estão no banco.
-class FilmeBase(SQLModel):
+class Filme(SQLModel, table=True):
+    """Modelo mapeado para a tabela do banco de dados.
+    Usamos apenas essa classe para o mapeamento (table=True) para
+    evitar múltiplas declarações da mesma tabela.
+    """
+    id: Optional[int] = Field(default=None, primary_key=True)
     titulo: str = Field(index=True)  # Index=True otimiza buscas por título
     diretor: str
     ano: int
     genero: str
 
-# Este é o modelo da TABELA do banco de dados.
-# Ele herda da Base e adiciona o 'id'.
-# 'table=True' diz ao SQLModel que esta classe representa uma tabela.
-class Filme(FilmeBase, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
 
-
-# Este é o modelo de LEITURA (output da API).
-# Ele é usado como 'response_model' no GET.
-# Inclui o 'id', que é gerado pelo banco.
-class FilmeRead(FilmeBase):
+# Schema para leitura (response_model)
+class FilmeRead(SQLModel):
     id: int
+    titulo: str
+    diretor: str
+    ano: int
+    genero: str
 
-# Este é o modelo de CRIAÇÃO (input da API).
-# Usado no body do POST e PUT.
-# Não inclui o 'id', pois ele ainda não existe.
-class FilmeCreate(FilmeBase):
-    pass
+
+# Schema para criação/atualização (input da API)
+class FilmeCreate(SQLModel):
+    titulo: str
+    diretor: str
+    ano: int
+    genero: str
     
 # Este é o modelo de ATUALIZAÇÃO (input da API - opcional mas boa prática).
 # Torna todos os campos opcionais para permitir updates parciais (PATCH).
